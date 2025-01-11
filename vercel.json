@@ -1,15 +1,8 @@
 {
-    "version": 2,
-    "functions": {
-      "api/utube.py": {
-        "runtime": "python3.9"
-      }
-    },
-    "routes": [
-      {
-        "src": "/api/(.*)",
-        "dest": "api/utube.py"
-      }
-    ]
+  "version": 2,
+  "functions": {
+    "api/utube.py": {
+      "runtime": "python3.9"
+    }
   }
-  
+}
