@@ -5,40 +5,59 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>YouTube Transcriber</title>
   <style>
-    body { font-family: Arial, sans-serif; padding: 20px; }
-    button { padding: 10px; background-color: #4CAF50; color: white; }
-    input { padding: 10px; margin-top: 10px; }
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    button {
+      padding: 10px 15px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    input {
+      padding: 8px;
+      margin-bottom: 10px;
+      width: 100%;
+    }
+    #result {
+      margin-top: 20px;
+    }
   </style>
 </head>
 <body>
   <h1>YouTube Transcriber</h1>
-  <label for="videoUrl">Enter YouTube Video URL:</label>
-  <input type="text" id="videoUrl" placeholder="https://www.youtube.com/watch?v=xyz" />
-  <button onclick="generateSummary()">Get Transcript</button>
+  <input id="youtubeUrl" type="text" placeholder="Enter YouTube Video URL" />
+  <button onclick="getTranscript()">Get Transcript</button>
   <div id="result"></div>
 
   <script>
-    function generateSummary() {
-      const videoUrl = document.getElementById('videoUrl').value; // Get URL from the user input
-      if (!videoUrl) {
-        alert("Please enter a video URL.");
+    async function getTranscript() {
+      const youtubeUrl = document.getElementById('youtubeUrl').value;
+      if (!youtubeUrl) {
+        alert('Please enter a YouTube URL!');
         return;
       }
-      
-      document.getElementById('result').innerHTML = "Summary is being generated...";
-      
-      fetch("/api/generate-summary", {
-        method: "POST",
-        body: JSON.stringify({ url: videoUrl }),
-        headers: { "Content-Type": "application/json" }
-      })
-      .then(response => response.json())
-      .then(data => {
-        document.getElementById('result').innerHTML = data.summary;  // Display the generated summary
-      })
-      .catch(error => {
-        document.getElementById('result').innerHTML = "Error: " + error.message;
+
+      document.getElementById('result').innerHTML = "Processing...";
+
+      // Sending a POST request to the Vercel serverless function
+      const response = await fetch('/api/utube', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url: youtubeUrl }),
       });
+
+      const data = await response.json();
+
+      // Displaying the result
+      if (data.error) {
+        document.getElementById('result').innerHTML = `Error: ${data.error}`;
+      } else {
+        document.getElementById('result').innerHTML = `<h3>Summary:</h3><p>${data.summary}</p>`;
+      }
     }
   </script>
 </body>
